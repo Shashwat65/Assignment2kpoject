@@ -15,7 +15,6 @@ store.subscribe(() => {
   queueMicrotask(() => {
     persistQueued = false
     const state = store.getState()
-    // @ts-expect-error types for store shape
     persistState(state.shapes)
   })
 })
