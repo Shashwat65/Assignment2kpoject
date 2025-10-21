@@ -51,7 +51,7 @@ export default function CanvasArea() {
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       const delta = e.shiftKey ? 10 : 1
-      if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'Delete', 'Backspace'].includes(e.key)) {
+      if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(e.key)) {
         e.preventDefault()
       }
       if (e.key === 'ArrowUp') dispatch(nudgeSelected({ dx: 0, dy: -delta, bounds }))
@@ -92,10 +92,10 @@ export default function CanvasArea() {
             <Layer ref={layerRef}>
               {/* subtle grid */}
               {Array.from({ length: 20 }).map((_, i) => (
-                <Rect key={`grid-h-${i}`} x={0} y={i * 40} width={2000} height={1} fill={i % 5 === 0 ? '#17213f' : '#0f1a33'} opacity={0.6} />
+                <Rect key={`grid-h-${i}`} listening={false} x={0} y={i * 40} width={2000} height={1} fill={i % 5 === 0 ? '#17213f' : '#0f1a33'} opacity={0.6} />
               ))}
               {Array.from({ length: 20 }).map((_, i) => (
-                <Rect key={`grid-v-${i}`} y={0} x={i * 40} width={1} height={2000} fill={i % 5 === 0 ? '#17213f' : '#0f1a33'} opacity={0.6} />
+                <Rect key={`grid-v-${i}`} listening={false} y={0} x={i * 40} width={1} height={2000} fill={i % 5 === 0 ? '#17213f' : '#0f1a33'} opacity={0.6} />
               ))}
               {items.map((it) => (
                 <ItemNode
@@ -147,6 +147,19 @@ export default function CanvasArea() {
           </Stage>
         </div>
       </div>
+      {selectedId && (
+        <div className="pointer-events-none absolute left-4 bottom-4 bg-black/40 text-white/90 text-xs px-2 py-1 rounded ring-1 ring-white/10">
+          {(() => {
+            const it = items.find((i) => i.id === selectedId)
+            if (!it) return null
+            return (
+              <span>
+                Selected: {it.type} • pos ({Math.round(it.x)}, {Math.round(it.y)}) • size {Math.round(it.width)}×{Math.round(it.height)}
+              </span>
+            )
+          })()}
+        </div>
+      )}
     </div>
   )
 }
