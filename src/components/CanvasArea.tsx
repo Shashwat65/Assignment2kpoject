@@ -25,7 +25,7 @@ export default function CanvasArea() {
     if (!el) return
     const ro = new ResizeObserver(() => {
       const rect = el.getBoundingClientRect()
-      setBounds({ w: Math.max(320, rect.width), h: Math.max(320, rect.height) })
+      setBounds({ w: Math.max(360, rect.width), h: Math.max(360, rect.height) })
     })
     ro.observe(el)
     return () => ro.disconnect()
@@ -74,11 +74,11 @@ export default function CanvasArea() {
 
   return (
     <div ref={containerRef} className="h-full w-full bg-[#0a0f1d] relative">
-      <div className="absolute inset-0 p-4">
+      <div className="absolute inset-0 p-3 sm:p-4">
         <div className="h-full w-full rounded-lg bg-[#0c142b] ring-1 ring-white/5 overflow-hidden">
           <Stage
-            width={bounds.w - CANVAS_PADDING * 2}
-            height={bounds.h - CANVAS_PADDING * 2}
+            width={Math.max(200, bounds.w - 24)}
+            height={Math.max(200, bounds.h - 24)}
             className="block mx-auto my-auto"
             style={{ background: '#0b1226' }}
             onMouseDown={(e) => {
@@ -90,6 +90,13 @@ export default function CanvasArea() {
             }}
           >
             <Layer ref={layerRef}>
+              {/* subtle grid */}
+              {Array.from({ length: 20 }).map((_, i) => (
+                <Rect key={`grid-h-${i}`} x={0} y={i * 40} width={2000} height={1} fill={i % 5 === 0 ? '#17213f' : '#0f1a33'} opacity={0.6} />
+              ))}
+              {Array.from({ length: 20 }).map((_, i) => (
+                <Rect key={`grid-v-${i}`} y={0} x={i * 40} width={1} height={2000} fill={i % 5 === 0 ? '#17213f' : '#0f1a33'} opacity={0.6} />
+              ))}
               {items.map((it) => (
                 <ItemNode
                   key={it.id}
@@ -117,8 +124,8 @@ export default function CanvasArea() {
                     return oldBox
                   }
                   // Keep within canvas
-                  const maxW = bounds.w
-                  const maxH = bounds.h
+                  const maxW = Math.max(200, bounds.w - 24)
+                  const maxH = Math.max(200, bounds.h - 24)
                   if (
                     newBox.x < 0 ||
                     newBox.y < 0 ||
