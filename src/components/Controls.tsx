@@ -32,30 +32,38 @@ export default function Controls() {
 
   const onPickImage = () => fileRef.current?.click()
   const onFile = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const f = e.target.files?.[0]
-    if (!f) return
-    const url = URL.createObjectURL(f)
-    dispatch(addImage(url))
-    // Revoke later; Konva keeps image in memory; revoking too early breaks drawing.
-    setTimeout(() => URL.revokeObjectURL(url), 30000)
+    const files = Array.from(e.target.files || [])
+    if (files.length === 0) return
+    files.forEach((f) => {
+      const url = URL.createObjectURL(f)
+      dispatch(addImage(url))
+      setTimeout(() => URL.revokeObjectURL(url), 30000)
+    })
     e.target.value = ''
   }
 
   return (
-    <div className="flex items-center gap-2">
-      <Button onClick={() => dispatch(addRect())}>Add Rectangle</Button>
-      <Button onClick={onPickImage}>Add Image</Button>
-      <input
-        ref={fileRef}
-        type="file"
-        accept="image/*"
-        className="hidden"
-        onChange={onFile}
-      />
-      <div className="w-px h-6 bg-white/10 mx-1" />
-      <Button onClick={() => dispatch(undo())}>Undo</Button>
-      <Button onClick={() => dispatch(redo())}>Redo</Button>
-      <div className="w-px h-6 bg-white/10 mx-1" />
+    <div className="flex items-center flex-wrap gap-2">
+      <div className="flex items-center gap-2">
+        <Button onClick={() => dispatch(addRect())}>Add Rectangle</Button>
+        <Button onClick={() => { dispatch(addRect({ width: 220, height: 140, x: 60, y: 60 })) }}>Add Wide</Button>
+        <Button onClick={() => { dispatch(addRect({ width: 100, height: 100, x: 20, y: 20 })) }}>Add Square</Button>
+        <Button onClick={onPickImage}>Add Image(s)</Button>
+        <input
+          ref={fileRef}
+          type="file"
+          accept="image/*"
+          multiple
+          className="hidden"
+          onChange={onFile}
+        />
+      </div>
+      <div className="w-px h-6 bg-white/10" />
+      <div className="flex items-center gap-2">
+        <Button onClick={() => dispatch(undo())}>Undo</Button>
+        <Button onClick={() => dispatch(redo())}>Redo</Button>
+      </div>
+      <div className="w-px h-6 bg-white/10" />
       <Button
         onClick={() => dispatch(deleteSelected())}
         disabled={!selectedId}
