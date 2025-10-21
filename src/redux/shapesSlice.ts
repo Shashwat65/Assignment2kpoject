@@ -196,3 +196,22 @@ export function loadState(): ShapesState | null {
 }
 
 export type { ShapesState, PresentState }
+
+function randomBlue(i: number) {
+  const hues = [190, 200, 210]
+  const h = hues[i % hues.length]
+  const s = 90
+  const l = 50 - (i % 3) * 6
+  return `hsl(${h} ${s}% ${l}%)`
+}
+export function loadState(): ShapesState | null {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY)
+    if (!raw) return null
+    return JSON.parse(raw) as ShapesState
+  } catch {
+    return null
+  }
+}
+
+export type { ShapesState, PresentState }
